@@ -1,0 +1,77 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+static def generateOutputName(String apkPrefix, boolean isRelease, String nameVersion, String versionCode, String env) {
+    def build = new File("./app/build/")
+    if (!build.exists()) {
+        build.mkdirs()
+    }
+
+    def outputs = new File(build, "outputs")
+    if (!outputs.exists()) {
+        outputs.mkdirs()
+    }
+
+    def bundle = new File(outputs, "bundle")
+    if (!bundle.exists()) {
+        bundle.mkdirs()
+    }
+
+    if (isRelease) {
+        def folder = new File(bundle, env + "Release")
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+    } else {
+        def folder = new File(bundle, env + "Debug")
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+    }
+    (new File(bundle, "OutputName")).text = "$apkPrefix-$nameVersion-$versionCode"
+}
+
+def getCurrentFlavor() {
+    String tskReqStr = getGradle().getStartParameter().getTaskRequests().toString()
+
+    Pattern pattern
+
+    if (tskReqStr.contains("bundle")) {
+        pattern = Pattern.compile("bundle(\\w+(-)*\\w+)(([Rr])elease|([Dd])ebug)")
+    } else if (tskReqStr.contains("assemble")) {
+        pattern = Pattern.compile("assemble(\\w+(-)*\\w+)(([Rr])elease|([Dd])ebug)")
+    } else {
+        pattern = Pattern.compile("generate(\\w+(-)*\\w+)(([Rr])elease|([Dd])ebug)")
+    }
+
+    Matcher matcher = pattern.matcher(tskReqStr)
+
+    if (matcher.find()) {
+        return matcher.group(1).toLowerCase()
+    } else {
+        return "NO_MATCH_FOUND"
+    }
+}
+
+// return true for dynamic-module
+static def applyPlugin4Project(Project project) {
+    if ("${project.properties.get("plugins")}".contains("AppPlugin")) {
+        project.apply plugin: 'com.android.application'
+        return false
+    } else if ("${project.properties.get("plugins")}".contains("DynamicFeaturePlugin")) {
+        project.apply plugin: 'com.android.dynamic-feature'
+        return true
+    } else if ("${project.properties.get("plugins")}".contains("LibraryPlugin")) {
+        project.apply plugin: 'com.android.library'
+    } else {
+        // What do to do? It may be future things 😁
+    }
+    return null
+}
+
+ext {
+    generateOutputName = this.&generateOutputName
+    extractVersionName = this.&extractVersionName
+    getCurrentFlavor = this.&getCurrentFlavor
+    applyPlugin4Project = this.&applyPlugin4Project
+}

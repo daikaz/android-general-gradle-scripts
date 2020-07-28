@@ -1,0 +1,12 @@
+import java.util.regex.Pattern
+
+apply from: "$baseGradleScriptURI/versions.gradle"
+apply from: "$baseGradleScriptURI/static.gradle"
+
+ext {
+    isBuildRelease = Pattern.compile("args=\\[.+?([Rr])elease]").matcher(getGradle().getStartParameter().getTaskRequests().toString()).find()
+    // The default values. YOU SHOULD OVERRIDE IT IN YOUR OWN PROJECT
+    codeVersion = 0      // versionCode
+    nameVersion = "1.0"  // versionName
+    apkPrefix = "APP"    // prefix of output apk file
+}

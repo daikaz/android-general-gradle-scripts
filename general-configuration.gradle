@@ -1,0 +1,122 @@
+import java.time.ZoneId
+
+def isDynamicModule = applyPlugin4Project(project)
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'kotlin-allopen'
+
+android {
+
+    String flavor = getCurrentFlavor()
+
+    if (flavor != "NO_MATCH_FOUND") {
+        boolean isMainApp = project.name == "app" && "${project.properties.get("plugins")}".contains("MainAppPlugin")
+        ext {
+            if (isMainApp) {
+                buildAt = (new Date()).format('yyyyMMddHHmmss', TimeZone.getTimeZone(ZoneId.of("Asia/Ho_Chi_Minh")))
+                generateOutputName(apkPrefix, isBuildRelease, nameVersion, "$codeVersion", flavor)
+                if (project.hasProperty('googleServiceJson')) {
+                    googleServiceJson(flavor)
+                }
+            }
+        }
+        defaultConfig {
+            minSdkVersion build_versions.min_sdk
+            targetSdkVersion build_versions.target_sdk
+            versionCode codeVersion
+            versionName nameVersion
+            vectorDrawables.useSupportLibrary = true
+        }
+
+        if (project.hasProperty('updateBuildConfig')) {
+            updateBuildConfig(buildTypes, flavor, isMainApp)
+        }
+    }
+
+    compileSdkVersion build_versions.target_sdk
+    //buildToolsVersion build_versions.build_tools
+
+    flavorDimensions "default"
+
+    productFlavors {
+        'dev-beta' {
+            isDefault.set(true)
+            dimension "default"
+        }
+        'dev-live' {
+            dimension "default"
+        }
+        live {
+            dimension "default"
+        }
+        beta {
+            dimension "default"
+        }
+        qa {
+            dimension "default"
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+        freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi", "-Xuse-experimental=kotlinx.coroutines.FlowPreview"]
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+
+        exclude 'lib/mips/libcardioDecider.so'
+        exclude 'lib/armeabi/libcardioDecider.so'
+
+        exclude 'lib/armeabi-v7a/libcardioDecider.so'
+        exclude 'lib/armeabi-v7a/libcardioRecognizer.so'
+        exclude 'lib/armeabi-v7a/libcardioRecognizer_tegra2.so'
+        exclude 'lib/armeabi-v7a/libopencv_core.so'
+        exclude 'lib/armeabi-v7a/libopencv_imgproc.so'
+        exclude 'lib/x86/libcardioDecider.so'
+        exclude 'lib/x86/libcardioRecognizer.so'
+        exclude 'lib/x86/libcardioRecognizer_tegra2.so'
+        exclude 'lib/x86/libopencv_core.so'
+        exclude 'lib/x86/libopencv_imgproc.so'
+        exclude 'lib/arm64-v8a/libcardioDecider.so'
+        exclude 'lib/arm64-v8a/libcardioRecognizer.so'
+        exclude 'lib/arm64-v8a/libcardioRecognizer_tegra2.so'
+        exclude 'lib/arm64-v8a/libopencv_core.so'
+        exclude 'lib/arm64-v8a/libopencv_imgproc.so'
+        exclude 'lib/x86_64/libcardioDecider.so'
+        exclude 'lib/x86_64/libcardioRecognizer.so'
+        exclude 'lib/x86_64/libcardioRecognizer_tegra2.so'
+        exclude 'lib/x86_64/libopencv_core.so'
+        exclude 'lib/x86_64/libopencv_imgproc.so'
+    }
+}
+
+apply from: "$baseGradleScriptURI/test.gradle"
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
+    implementation deps.coroutines.coroutines_rx2
+    implementation deps.kotlin.stdlib
+}
+
+if (isDynamicModule == true) {
+    apply from: "$baseGradleScriptURI/fix-dynamic-module.gradle"
+}

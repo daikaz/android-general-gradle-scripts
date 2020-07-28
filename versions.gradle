@@ -1,0 +1,262 @@
+/**
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ **/
+ext {
+    build_versions = [
+        min_sdk    : 21,
+        target_sdk : 28,
+        build_tools: "28.0.3"
+    ]
+}
+ext.deps = [:]
+def versions = [:]
+versions.android_gradle_plugin = '3.5.3'
+versions.appcompat = "1.2.0-beta01"
+versions.aws_gradle_plugin = '2.9.+'
+versions.core_ktx = "1.0.0"
+versions.constraint_layout = "1.1.3"
+versions.kotlin = "1.3.41"
+versions.support = "1.0.0"
+versions.junit = "4.12"
+versions.atsl_core = "1.2.0"
+versions.atsl_junit = "1.1.1"
+versions.atsl_rules = "1.2.0"
+versions.atsl_runner = "1.2.0"
+versions.atsl_ext_truth = "1.0.0"
+versions.atsl_truth = "0.42"
+versions.espresso = "3.2.0"
+versions.mockito = "2.25.0"
+versions.mockito_all = "1.10.19"
+versions.mockito_android = "2.25.0"
+versions.mockwebserver = "3.8.1"
+versions.robolectric = "4.3"
+versions.trello = "3.1.0"
+versions.rxjava = "2.0.2"
+versions.multidex = "2.0.1"
+versions.firestore = "21.2.0"
+versions.google_services = "4.3.3"
+versions.analytics = "17.2.0"
+versions.auth = "19.1.0"
+versions.firebase_core = "17.2.0"
+versions.firebase_messaging = "20.2.0"
+versions.twitter = "3.1.0@aar"
+versions.facebook = "5.11.0"
+versions.amazonaws = "2.6.19"
+versions.react_native = "0.61.5"
+versions.gson = "2.8.6"
+versions.retrofit = "2.7.2"
+versions.okhttp = "4.4.0"
+versions.arch_component = "2.1.0"
+versions.coroutines = "1.3.6"
+versions.glide = "4.10.0"
+versions.arch_component_ktx = "2.2.0"
+versions.epoxy = "3.8.0"
+versions.ktlint = "0.34.2"
+versions.material = "1.1.0"
+versions.reactivestreams = "2.1.0"
+versions.guava = "28.1-android"
+versions.cardview = "1.0.0"
+versions.koin = "2.1.3"
+versions.crashlytics = "2.10.1"
+versions.lottie = "3.2.2"
+versions.okio = "2.4.3"
+versions.rave = "2.2.0"
+versions.zendesk = "3.0.3"
+versions.timber = "4.7.1"
+versions.slf4j = "1.7.25"
+versions.logback = '1.2.3'
+versions.fabric = "1.31.2"
+versions.browser = "1.2.0"
+versions.firebase_config = "19.0.4"
+versions.room = "2.2.4"
+versions.viewpager2 = "1.0.0"
+versions.joom = "1.1.0"
+versions.appsync = "2.9.+"
+versions.paho_client_mqttv3 = "1.2.0"
+versions.paho_android_service = "1.1.1"
+versions.lingver = "1.3.0"
+versions.shimmer = "0.5.0"
+versions.auth0 = "1.23.0"
+versions.work_manager = "2.3.4"
+versions.firebase_crashlytics_gradle = "2.1.1"
+versions.firebase_crashlytics = "17.0.1"
+versions.joda = "2.10.6"
+versions.firebase_storage = "19.1.1"
+ext.versions = versions
+
+def support = [:]
+support.annotations = "androidx.annotation:annotation:$versions.support"
+support.app_compat = "androidx.appcompat:appcompat:$versions.appcompat"
+support.core_ktx = "androidx.core:core-ktx:$versions.core_ktx"
+support.recyclerview = "androidx.recyclerview:recyclerview:$versions.support"
+support.cardview = "androidx.cardview:cardview:$versions.cardview"
+support.viewpager2 = "androidx.viewpager2:viewpager2:$versions.viewpager2"
+support.work_manager = "androidx.work:work-runtime-ktx:$versions.work_manager"
+deps.support = support
+
+def espresso = [:]
+espresso.core = "androidx.test.espresso:espresso-core:$versions.espresso"
+espresso.contrib = "androidx.test.espresso:espresso-contrib:$versions.espresso"
+espresso.intents = "androidx.test.espresso:espresso-intents:$versions.espresso"
+deps.espresso = espresso
+
+def atsl = [:]
+
+// Robolectric environment
+atsl.core = "androidx.test:core:$versions.atsl_core"
+
+// AndroidJUnitRunner and JUnit Rules
+atsl.runner = "androidx.test:runner:$versions.atsl_runner"
+atsl.rules = "androidx.test:rules:$versions.atsl_rules"
+
+// Assertions
+atsl.ext_junit = "androidx.test.ext:junit:$versions.atsl_junit"
+atsl.atsl_ext_truth = "androidx.test.ext:truth:$versions.atsl_ext_truth"
+atsl.atsl_truth = "com.google.truth:truth:$versions.atsl_truth"
+deps.atsl = atsl
+
+def mockito = [:]
+mockito.core = "org.mockito:mockito-core:$versions.mockito"
+mockito.all = "org.mockito:mockito-all:$versions.mockito_all"
+mockito.android = "org.mockito:mockito-android:$versions.mockito_android"
+deps.mockito = mockito
+
+def arch_component = [:]
+arch_component.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.arch_component"
+arch_component.livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.arch_component_ktx"
+arch_component.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.arch_component_ktx"
+arch_component.runtime_ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.arch_component_ktx"
+arch_component.viewmodel_savedstate = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.arch_component_ktx"
+arch_component.paging = "androidx.paging:paging-runtime:$versions.arch_component"
+arch_component.reactivestreams = "androidx.lifecycle:lifecycle-reactivestreams:$versions.reactivestreams"
+deps.arch_component = arch_component
+
+def coroutines = [:]
+coroutines.core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+coroutines.coroutines_rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.coroutines"
+coroutines.test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
+deps.coroutines = coroutines
+
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+kotlin.ktlint = "com.pinterest:ktlint:$versions.ktlint"
+deps.kotlin = kotlin
+
+def airbnb = [:]
+airbnb.lottie="com.airbnb.android:lottie:$versions.lottie"
+airbnb.epoxy = "com.airbnb.android:epoxy:$versions.epoxy"
+airbnb.epoxy_processor = "com.airbnb.android:epoxy-processor:$versions.epoxy"
+airbnb.epoxy_databinding = "com.airbnb.android:epoxy-databinding:$versions.epoxy"
+deps.airbnb = airbnb
+
+def room = [:]
+room.runtime = "androidx.room:room-runtime:$versions.room"
+room.compiler = "androidx.room:room-compiler:$versions.room"
+room.room_ktx = "androidx.room:room-ktx:$versions.room"
+room.room_testing = "androidx.room:room-testing:$versions.room"
+deps.room = room
+
+def koin = [:]
+koin.viewModel = "org.koin:koin-androidx-viewmodel:$versions.koin"
+koin.extension = "org.koin:koin-androidx-ext:$versions.koin"
+deps.koin = koin
+
+def google = [:]
+google.firestore = "com.google.firebase:firebase-firestore:$versions.firestore"
+google.services = "com.google.gms:google-services:$versions.google_services"
+google.auth = "com.google.firebase:firebase-auth:$versions.auth"
+google.firebase_config = "com.google.firebase:firebase-config:$versions.firebase_config"
+google.analytics = "com.google.firebase:firebase-analytics:$versions.analytics"
+google.firebase_core = "com.google.firebase:firebase-core:$versions.firebase_core"
+google.gson = "com.google.code.gson:gson:$versions.gson"
+google.guava = "com.google.guava:guava:$versions.guava"
+google.material = "com.google.android.material:material:$versions.material"
+google.crashlytics = "com.crashlytics.sdk.android:crashlytics:$versions.crashlytics"
+google.firebase_messaging = "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
+google.firebase_crashlytics_gradle = "com.google.firebase:firebase-crashlytics-gradle:$versions.firebase_crashlytics_gradle"
+google.firebase_crashlytics = "com.google.firebase:firebase-crashlytics:$versions.firebase_crashlytics"
+google.firebase_storage = "com.google.firebase:firebase-storage:$versions.firebase_storage"
+deps.google = google
+
+def twitter = [:]
+twitter.core = "com.twitter.sdk.android:twitter-core:$versions.twitter"
+twitter.main = "com.twitter.sdk.android:twitter:$versions.twitter"
+deps.twitter = twitter
+
+def amazonaws = [:]
+amazonaws.s3_sdk = "com.amazonaws:aws-android-sdk-s3:$versions.amazonaws"
+amazonaws.cognito = "com.amazonaws:aws-android-sdk-cognito:$versions.amazonaws"
+amazonaws.mobile_client = "com.amazonaws:aws-android-sdk-mobile-client:$versions.amazonaws@aar"
+amazonaws.appsync = "com.amazonaws:aws-android-sdk-appsync:$versions.appsync"
+amazonaws.paho_client_mqttv3 = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$versions.paho_client_mqttv3"
+amazonaws.paho_android_service = "org.eclipse.paho:org.eclipse.paho.android.service:$versions.paho_android_service"
+deps.amazonaws = amazonaws
+
+def facebook = [:]
+facebook.login = "com.facebook.android:facebook-login:$versions.facebook"
+facebook.react_native = "com.facebook.react:react-native:$versions.react_native"
+facebook.shimmer = "com.facebook.shimmer:shimmer:$versions.shimmer"
+deps.facebook = facebook
+
+def glide = [:]
+glide.glide = "com.github.bumptech.glide:glide:$versions.glide"
+glide.okhttp3 = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
+def squareup = [:]
+squareup.okio = "com.squareup.okio:okio:$versions.okio"
+squareup.retrofit = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+squareup.okhttp = "com.squareup.okhttp3:okhttp:$versions.okhttp"
+squareup.logging_interceptor = "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
+deps.squareup = squareup
+
+def uber = [:]
+uber.rave = "com.uber:rave:$versions.rave"
+uber.rave_compiler = "com.uber:rave-compiler:$versions.rave"
+deps.uber = uber
+
+def log = [:]
+log.timber = "com.jakewharton.timber:timber:$versions.timber"
+log.logback = "ch.qos.logback:logback-classic:$versions.logback"
+log.slf4j_api = "org.slf4j:slf4j-api:$versions.slf4j"
+deps.log = log
+
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+deps.aws_gradle_plugin = "com.amazonaws:aws-android-sdk-appsync-gradle-plugin:$versions.aws_gradle_plugin"
+deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+deps.junit = "junit:junit:$versions.junit"
+deps.robolectric = "org.robolectric:robolectric:$versions.robolectric"
+deps.rxlifecycle_components = "com.trello.rxlifecycle3:rxlifecycle-components:$versions.trello"
+deps.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxjava"
+deps.rxjava = "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+deps.multidex = "androidx.multidex:multidex:$versions.multidex"
+deps.zendesk = "com.zendesk:support:$versions.zendesk"
+deps.fabric = "io.fabric.tools:gradle:$versions.fabric"
+deps.browser = "androidx.browser:browser:$versions.browser"
+deps.joom = "com.joom:xxhash-android:$versions.joom"
+deps.lingver = "com.github.YarikSOffice:lingver:$versions.lingver"
+deps.auth0 = "com.auth0.android:auth0:$versions.auth0"
+deps.joda = "net.danlew:android.joda:$versions.joda"
+
+ext.deps = deps
+
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven { url "https://jitpack.io" }
+    handler.maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    handler.mavenCentral()
+    handler.maven {
+        url "https://maven.google.com"
+    }
+}
+
+ext.addRepos = this.&addRepos

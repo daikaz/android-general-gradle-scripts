@@ -1,0 +1,157 @@
+apply plugin: 'com.android.dynamic-feature'
+
+String flavor = getCurrentFlavor()
+def buildType = flavor + "Debug"
+if (isBuildRelease) {
+    buildType = flavor + "Release"
+}
+
+task fixDynamicModule {
+    doLast {
+        println "[${project.name}] Fix Dynamic Module"
+        def appManifest = new XmlSlurper().parse(file("$rootDir/app/src/main/AndroidManifest.xml"))
+        String applicationId = appManifest.@package.text()
+
+        if (applicationId == null || applicationId.isEmpty()) {
+            throw new Exception("You must declare package in app/src/main/AndroidManifest.xml")
+        }
+
+        def featureManifest = new XmlSlurper().parse(file("$rootDir/${project.name}/src/main/AndroidManifest.xml"))
+        String featureId = featureManifest.@package.text()
+
+        if (featureId == null || featureId.isEmpty()) {
+            throw new Exception("You must declare package in ${project.name}/src/main/AndroidManifest.xml")
+        }
+
+        def DIR_PATH = "$rootDir/${project.name}/build/generated/not_namespaced_r_class_sources/$buildType"
+        def APP_DIR_PATH = "$rootDir/app/build/generated/not_namespaced_r_class_sources/$buildType"
+
+        def readFile
+        def readScanner = ant.fileScanner {
+            fileset(dir: DIR_PATH)
+        }
+        for (file in readScanner) {
+            assert file instanceof File
+            def modulePath = featureId.replace(".", "/")
+            if (file.path.contains(modulePath)) {
+                readFile = file
+                break
+            }
+        }
+
+        def readFileApp
+        def readAppScanner = ant.fileScanner {
+            fileset(dir: APP_DIR_PATH)
+        }
+        for (file in readAppScanner) {
+            assert file instanceof File
+            def modulePath = applicationId.replace(".", "/")
+            if (file.path.contains(modulePath)) {
+                readFileApp = file
+                break
+            }
+        }
+
+        if (readFile && readFileApp) {
+            println 'Start merging file'
+
+            // find all the static final class in read file
+            def currentClass = ""
+            def classLineMap = [:]
+            def canWrite = false
+            readFileApp.eachLine { readLine ->
+                if (readLine.contains("public static final class id {")) {
+                    return
+                }
+
+                if (readLine.contains("public static final class")) {
+                    currentClass = readLine
+                    if (classLineMap[readLine] == null) {
+                        classLineMap[readLine] = new ArrayList()
+                    }
+                    canWrite = true
+                } else if (readLine == "  }" && canWrite) {
+                    canWrite = false
+                } else if (canWrite) {
+                    classLineMap[currentClass].add(readLine)
+                }
+            }
+            
+            canWrite = false
+            readFile.eachLine { readLine ->
+                if (readLine.contains("public static final class")) {
+                    currentClass = readLine
+                    if (classLineMap[readLine] == null) {
+                        classLineMap[readLine] = new ArrayList()
+                    }
+                    canWrite = true
+                } else if (readLine == "  }" && canWrite) {
+                    canWrite = false
+                } else if (canWrite) {
+                    if (readLine.contains("public static final")) {
+                        
+                        def current = readLine.split('=')[0]
+
+                        def removeIndex = -1
+                        classLineMap[currentClass].eachWithIndex { data, index ->
+                            def item = data.split('=')                    
+                            if (item.length > 0) {
+                                if (item[0] == current) {
+                                    removeIndex = index
+                                }
+                            }
+                        }
+
+                        if (removeIndex >= 0) {
+                            classLineMap[currentClass].remove(removeIndex)
+                        }
+                    }
+
+                    classLineMap[currentClass].add(readLine)
+                }
+            }
+
+
+            def storedPath = readFile.path
+            readFile.delete()
+
+            def newFile = new File(storedPath)
+            newFile.createNewFile()
+            newFile.withWriter { writer ->
+                writer.write("package " + featureId + ";")
+                writer.newLine()
+                writer.write("public final class R {")
+                writer.newLine()
+                classLineMap.each { entry ->
+                    writer.write(entry.key)
+                    writer.newLine()
+                    entry.value.each { singleLine ->
+                        writer.write(singleLine)
+                        writer.newLine()
+                    }
+                    writer.write("  }")
+                    writer.newLine()
+                }
+                writer.write("}")
+                writer.newLine()
+            }
+
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    def exp = /process[a-zA-Z]+Resources/
+
+    if (task.name ==~ exp) {
+        task.finalizedBy(fixDynamicModule)
+    }
+}
+
+tasks.whenTaskAdded { task -> 
+    def exp = /kapt[a-zA-Z]+Kotlin/
+    
+    if (task.name ==~ exp) {
+        task.dependsOn(fixDynamicModule)
+    }
+}
