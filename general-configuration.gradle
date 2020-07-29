@@ -20,8 +20,8 @@ android {
             if (isMainApp) {
                 buildAt = (new Date()).format('yyyyMMddHHmmss', TimeZone.getTimeZone(ZoneId.of("Asia/Ho_Chi_Minh")))
                 generateOutputName(apkPrefix, isBuildRelease, nameVersion, "$codeVersion", flavor)
-                if (project.hasProperty('googleServiceJson')) {
-                    googleServiceJson(flavor)
+                if (project.hasProperty('configServices')) {
+                    configServices(flavor)
                 }
             }
         }
@@ -44,11 +44,8 @@ android {
     flavorDimensions "default"
 
     productFlavors {
-        'dev-beta' {
+        dev {
             isDefault.set(true)
-            dimension "default"
-        }
-        'dev-live' {
             dimension "default"
         }
         live {
