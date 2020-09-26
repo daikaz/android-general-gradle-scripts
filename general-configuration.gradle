@@ -44,17 +44,17 @@ android {
     flavorDimensions "default"
 
     productFlavors {
-        'customer-dev' {
+        'clinic-dev' {
             isDefault.set(true)
             dimension "default"
         }
-        'customer-live' {
-            dimension "default"
-        }
-        'clinic-dev' {
-            dimension "default"
-        }
         'clinic-live' {
+            dimension "default"
+        }
+        'customer-dev' {
+            dimension "default"
+        }
+        'customer-live' {
             dimension "default"
         }
     }
